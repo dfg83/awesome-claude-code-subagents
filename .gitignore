@@ -1,5 +1,20 @@
-# Git configuration and secrets
-.openclaw/
+# Ignore everything by default
+*
+
+# But allow this .gitignore file itself
+!.gitignore
+
+# And allow the projects folder and its contents
+!projects/
+!projects/*
+!projects/**/*
+
+# Still ignore internal files even inside projects
+projects/.openclaw/
+projects/.pi/
+projects/.git/
+
+# Ignore these file types anywhere
 *.log
 .DS_Store
 node_modules/
