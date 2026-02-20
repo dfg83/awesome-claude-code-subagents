@@ -1,0 +1,3 @@
+[submodule "projects/awesome-claude-code-subagents"]
+	path = projects/awesome-claude-code-subagents
+	url = https://github.com/dfg83/awesome-claude-code-subagents.git
