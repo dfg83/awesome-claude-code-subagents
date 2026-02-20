@@ -1,0 +1,5 @@
+# Git configuration and secrets
+.openclaw/
+*.log
+.DS_Store
+node_modules/
