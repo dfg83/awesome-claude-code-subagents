@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "miro-mcp": {
+      "url": "https://mcp.miro.com/",
+      "oauthScopes": []
+    }
+  }
+}
