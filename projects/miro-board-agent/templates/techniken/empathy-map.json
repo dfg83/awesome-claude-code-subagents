@@ -1,0 +1,79 @@
+{
+  "name": "Empathy Map",
+  "beschreibung": "Verstehe deine Zielgruppe aus deren Perspektive",
+  "template": {
+    "title": "Empathy Map: {projektName}",
+    "description": "Tauche in die Welt deiner Zielgruppe ein",
+    "structure": [
+      {
+        "type": "text",
+        "content": "❤️ EMPATHY MAP",
+        "style": {"fontSize": 36, "color": "#F24726"},
+        "position": {"x": 0, "y": -400}
+      },
+      {
+        "type": "text",
+        "content": "Projekt: {projektName}",
+        "style": {"fontSize": 20},
+        "position": {"x": 0, "y": -350}
+      },
+      {
+        "type": "shape",
+        "shapeType": "circle",
+        "width": 200,
+        "height": 200,
+        "style": {"fillColor": "#FFF9B1"},
+        "position": {"x": 0, "y": 0}
+      },
+      {
+        "type": "text",
+        "content": "👤 USER",
+        "style": {"fontSize": 18, "color": "#333333"},
+        "position": {"x": 0, "y": 0}
+      }
+    ],
+    "quadranten": [
+      {
+        "name": "sagt",
+        "label": "💬 SAGT",
+        "subtitle": "Was sagt sie/er laut?",
+        "farbe": "#E0F7FA",
+        "position": {"x": -400, "y": -150},
+        "width": 300,
+        "height": 250
+      },
+      {
+        "name": "denkt",
+        "label": "💭 DENKT",
+        "subtitle": "Was beschäftigt sie/ihn?",
+        "farbe": "#FFF3E0",
+        "position": {"x": 400, "y": -150},
+        "width": 300,
+        "height": 250
+      },
+      {
+        "name": "macht",
+        "label": "👋 MACHT",
+        "subtitle": "Welches Verhalten zeigt sie/er?",
+        "farbe": "#F3E5F5",
+        "position": {"x": -400, "y": 150},
+        "width": 300,
+        "height": 250
+      },
+      {
+        "name": "fuehlt",
+        "label": "❤️ FÜHLT",
+        "subtitle": "Welche Emotionen hat sie/er?",
+        "farbe": "#FFEBEE",
+        "position": {"x": 400, "y": 150},
+        "width": 300,
+        "height": 250
+      }
+    ]
+  },
+  "fragen": [
+    "Wer ist die Zielperson/Persona?",
+    "In welchem Kontext befindet sie sich?",
+    "Was ist ihr Hauptziel?"
+  ]
+}

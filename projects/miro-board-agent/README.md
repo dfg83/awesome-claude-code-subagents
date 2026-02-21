@@ -1,109 +1,125 @@
-# Miro Board Agent - Projektübersicht
+# Miro Board Agent - Setup-Anleitung
 
-Interaktiver Design Thinking Coach, der Kreativtechniken in Miro-Boards überführt.
+Diese Anleitung hilft dir, den Miro MCP Server einzurichten, damit der Design Thinking Coach funktioniert.
 
-## 🎯 Funktionsumfang
+---
 
-### Kernfunktionen
-- **Kreativtechnik-Auswahl**: Automatische Template-Auswahl basierend auf der verwendeten Technik
-- **State-Persistenz**: Speichert den Arbeitsstand pro Projekt (JSON-basiert)
-- **Interaktiver Dialog**: Coach spricht mit User, sammelt Input, passt Board an
-- **Miro-Integration**: Nutzt den offiziellen Miro MCP Server
+## Was ist der Miro MCP Server?
 
-### Unterstützte Kreativtechniken (9 Templates)
+Der Miro MCP Server ermöglicht es KI-Agenten (wie diesem Coach), direkt mit Miro-Boards zu interagieren – Boards zu erstellen, Sticky Notes hinzuzufügen, Diagramme zu generieren und Inhalte zu lesen.
 
-| Technik | Beschreibung |
-|---------|-------------|
-| Brainstorming | Freies Ideen-Sammeln |
-| Crazy 8s | 8 Ideen in 8 Minuten |
-| Six Thinking Hats | 6 Perspektiven (de Bono) |
-| Empathy Map | Kundenperspektive verstehen |
-| SCAMPER | 7 Fragen zur Ideenentwicklung |
-| Mind Mapping | Visuelle Ideen-Organisation |
-| Customer Journey | Touchpoint-Visualisierung |
-| Business Model Canvas | Geschäftsmodell-Entwicklung |
-| Walt Disney Method | Träumer/Realist/Kritiker |
+**Offizielle Doku:** https://developers.miro.com/docs/miro-mcp
 
-## 📁 Projektstruktur
+---
 
-```
-miro-board-agent/
-├── README.md              # User-Setup-Anleitung (MCP)
-├── SKILL.md               # Dokumentation für dich
-├── package.json           # Node.js Metadata
-├── state/                 # Persistente Session-Daten
-│   ├── example.json       # Beispiel-State
-│   └── <projekt>.json     # Session-Daten
-├── templates/techniken/   # Board-Templates
-│   ├── brainstorming.json
-│   ├── crazy8s.json
-│   ├── six-thinking-hats.json
-│   ├── empathy-map.json
-│   ├── scamper.json
-│   ├── mind-mapping.json
-│   ├── customer-journey.json
-│   ├── business-model-canvas.json
-│   └── walt-disney.json
-└── scripts/
-    ├── coach.sh           # CLI-Entrypoint
-    └── coach.js           # Agent-Interface (Node.js)
-```
+## Voraussetzungen
 
-## 🚀 Verwendung
+- Miro-Account (kostenlos oder bezahlt)
+- Für **Enterprise-Accounts**: Admin muss MCP erst für die Organisation aktivieren
+- Ein MCP-fähiger Client (OpenClaw unterstützt MCP)
 
-### Für den User (Setup)
-1. Miro MCP Server konfigurieren (siehe README.md)
-2. OAuth-Flow durchführen
-3. Skill verwenden: `"Starte Miro Coach"`
+---
 
-### Für dich (als Agent)
-```javascript
-// State laden
-const state = loadState('projekt-name');
+## Schritt-für-Schritt Setup
 
-// Template laden
-const template = loadTemplate('brainstorming');
+### 1. Miro MCP Server aktivieren (nur Enterprise)
 
-// State speichern
-saveState('projekt-name', newState);
-```
+Falls du einen Miro Enterprise Plan hast:
+- Admin-Guide: https://help.miro.com/hc/en-us/articles/31625761037202-Miro-MCP-Server-admin-guide
+- Dein Admin muss MCP für die Organisation freischalten
 
-## 💡 Workflow
+### 2. Konfiguration in OpenClaw
 
-1. **User sagt**: "Starte Miro Coach"
-2. **Ich frage**:
-   - Projektnamen?
-   - Welche Kreativtechnik wurde verwendet?
-   - Neues Board oder bestehendes?
-3. **Template laden** → Board-Struktur vorbereiten
-4. **MCP nutzen** → Board in Miro erstellen
-5. **Input sammeln** → User gibt Ergebnisse der Kreativtechnik
-6. **Board befüllen** → Sticky Notes, Shapes, Texte platzieren
-7. **Iterieren** → "Passt das so?", Anpassungen vornehmen
-8. **State speichern** → JSON persistieren für nächstes Mal
+Füge die folgende Konfiguration zu deinem OpenClaw MCP-Setup hinzu:
 
-## 🔧 Technische Details
-
-### State-Format
 ```json
 {
-  "projektName": "string",
-  "kreativTechnik": "string",
-  "miroBoardId": "string",
-  "miroBoardUrl": "string",
-  "thema": "string",
-  "arbeitspakete": [...],
-  "letzteAktivitaet": "ISO-Timestamp",
-  "notizen": "string"
+  "mcpServers": {
+    "miro-mcp": {
+      "url": "https://mcp.miro.com/",
+      "disabled": false,
+      "autoApprove": []
+    }
+  }
 }
 ```
 
-### MCP Integration
-- Server: `https://mcp.miro.com/`
-- Auth: OAuth 2.1
-- Tools: Board erstellen, Items hinzufügen, lesen
+**Wo einfügen?**
+- In deiner OpenClaw-Konfiguration unter dem MCP-Servers-Bereich
+- Oder bei CLI-Clients: in der `mcp.json` oder ähnlichen Config-Datei
 
-## 📚 Referenzen
+### 3. Mit Miro verbinden (OAuth-Flow)
 
-- Miro MCP Docs: https://developers.miro.com/docs/miro-mcp
-- Setup Guide: https://developers.miro.com/docs/connecting-to-miro-mcp
+Nach dem Einfügen der Konfiguration:
+
+1. **"Connect" klicken** – Startet den OAuth-Flow
+2. **Team auswählen** – Wähle das Miro-Team, in dem die Boards erstellt werden sollen
+   - ⚠️ **Wichtig:** Der MCP Server ist team-spezifisch! Wählst du das falsche Team, funktioniert der Zugriff nicht.
+3. **"Add" klicken** – Autorisiert den Zugriff
+4. **"Continue"** – Du wirst zurück zu OpenClaw geleitet
+
+### 4. Verbindung prüfen
+
+Nach erfolgreicher Verbindung solltest du:
+- Tools vom Miro MCP Server sehen (z.B. `create_board`, `add_sticky_note`)
+- Prompts/Templates verfügbar haben
+
+---
+
+## Troubleshooting
+
+### "Access error" oder "No permission"
+→ Neu authentifizieren und **das korrekte Team** auswählen (siehe Schritt 3)
+
+### "Remote connection not supported"
+→ Einige Tools unterstützen keine Remote-MCP-Verbindungen. OpenClaw unterstützt dies.
+
+### Verbindung wird nicht hergestellt
+- Prüfe, ob du die neueste OpenClaw-Version hast
+- Stelle sicher, dass dein Netzwerk `https://mcp.miro.com/` erreichen kann
+- Versuche den MCP Inspector: https://modelcontextprotocol.io/docs/tools/inspector
+
+---
+
+## Sicherheit
+
+- **OAuth 2.1** – Moderne, sichere Authentifizierung
+- **Team-spezifisch** – Der Zugriff gilt nur für das ausgewählte Team
+- **Standard Rate-Limits** – API-Limits schützen vor Überlastung
+- **Berechtigungs-basiert** – Nur was du in Miro sehen darfst, sieht auch der Agent
+
+---
+
+## Unterstützte MCP-Clients
+
+Der Miro MCP Server funktioniert mit:
+- ✅ OpenClaw (dieser Agent)
+- ✅ Claude Code
+- ✅ Cursor
+- ✅ VSCode + GitHub Copilot
+- ✅ Replit, Lovable, Windsurf
+- ✅ Gemini CLI, OpenAI Codex
+- ✅ und vielen mehr...
+
+---
+
+## Nächste Schritte
+
+Sobald das Setup läuft:
+
+```bash
+# Starte den Design Thinking Coach
+~/.openclaw/workspace/skills/miro-board-agent/scripts/coach.sh
+```
+
+Der Coach führt dich dann durch:
+1. Projekt anlegen
+2. Kreativtechnik wählen
+3. Board erstellen/bearbeiten
+4. Arbeitsstand speichern
+
+---
+
+**Fragen oder Probleme?**
+- Miro MCP Doku: https://developers.miro.com/docs/miro-mcp
+- Feedback-Formular: https://q2oeb0jrhgi.typeform.com/to/YATmJPVx
