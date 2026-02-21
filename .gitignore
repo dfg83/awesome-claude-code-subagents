@@ -9,11 +9,8 @@
 !projects/*
 !projects/**/*
 
-# Allow our custom miro-board-agent skill
-!skills/
-!skills/miro-board-agent/
-!skills/miro-board-agent/*
-!skills/miro-board-agent/**/*
+# Skills remain ignored - if a skill is project-specific, keep it in projects/
+# The skills/ folder is for shared/reusable skills only
 
 # Still ignore internal files even inside projects
 projects/.openclaw/

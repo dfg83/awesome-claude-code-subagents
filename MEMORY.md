@@ -40,28 +40,33 @@ When Marco describes a task (e.g., "review this TypeScript code", "optimize Kube
 When Marco provides a new sub-agent repository, always use this structure:
 
 1. **Clone to:** `projects/<repo-name>/`
-2. **Create Skill:** `skills/<repo-name>/`
-3. **Required files:**
+2. **All project files stay in projects/** – Do NOT create separate skills/ folder unless explicitly asked
+3. **Required files in projects/<repo-name>/:**
    - `SKILL.md` – Documentation
+   - `ARBEITSSTAND.md` – Current work status
+   - `README.md` – User-facing documentation
    - `registry/agents.json` – Indexed agent registry
    - `scripts/index.js` – Parser for agent definitions
    - `scripts/router.js` – Agent selection logic (if auto-selection desired)
    - `scripts/sync.sh` – Update script
 4. **Auto-sync cronjob:** Daily at 03:00 CET (unless specified otherwise)
 
-Follow the same pattern as `claude-agents` skill for consistency.
+**Important:** The `skills/` folder is for shared/reusable skills only. Project-specific code belongs in `projects/`.
 
 ## Project Workflow Standard
 
 **Arbeitsstand immer dokumentieren:**
 
 Für jedes Projekt im `projects/` Ordner:
-1. **Arbeitsstand speichern** in `projects/<name>/ARBEITSSTAND.md`
+1. **ALLES im Projektordner erstellen** – Code, Skills, Scripts, Assets
+   - Nicht automatisch in `skills/` anlegen
+   - `skills/` ist nur für geteilte/wiederverwendbare Skills
+2. **Arbeitsstand speichern** in `projects/<name>/ARBEITSSTAND.md`
    - Was wurde erledigt?
    - Was fehlt noch?
    - Nächste Schritte?
-2. **Im Git-Repo committen** – nie uncommitted lassen
-3. **Bei längeren Pausen:** Stand updaten, damit Wiedereinstieg möglich ist
+3. **Im Git-Repo committen** – nie uncommitted lassen
+4. **Bei längeren Pausen:** Stand updaten, damit Wiedereinstieg möglich ist
 
 Dies gilt für ALLE zukünftigen Projekte – keine Ausnahmen.
 
