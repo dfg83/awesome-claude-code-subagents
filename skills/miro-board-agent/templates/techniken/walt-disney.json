@@ -1,0 +1,91 @@
+{
+  "name": "Walt Disney Method",
+  "beschreibung": "3 Rollen: Träumer, Realist, Kritiker – für ausgewogene Ideen",
+  "template": {
+    "title": "Walt Disney Method: {projektName}",
+    "description": "Betrachte deine Idee aus drei Perspektiven",
+    "structure": [
+      {
+        "type": "text",
+        "content": "🎬 WALT DISNEY METHOD",
+        "style": {"fontSize": 36, "color": "#4262FF"},
+        "position": {"x": 0, "y": -350}
+      },
+      {
+        "type": "text",
+        "content": "Projekt: {projektName}",
+        "style": {"fontSize": 20},
+        "position": {"x": 0, "y": -300}
+      },
+      {
+        "type": "shape",
+        "shapeType": "rectangle",
+        "width": 600,
+        "height": 80,
+        "style": {"fillColor": "#E8E8E8"},
+        "position": {"x": 0, "y": -220}
+      },
+      {
+        "type": "text",
+        "content": "🎯 Die Idee/Thema:",
+        "style": {"fontSize": 16, "color": "#666666"},
+        "position": {"x": 0, "y": -220}
+      }
+    ],
+    "rollen": [
+      {
+        "name": "traeumer",
+        "emoji": "🌈",
+        "label": "DER TRÄUMER",
+        "subtitle": "Keine Grenzen, keine Regeln",
+        "fragen": [
+          "Was wäre, wenn alles möglich wäre?",
+          "Wie wäre die perfekte Lösung?",
+          "Was wünsche ich mir wirklich?"
+        ],
+        "farbe": "#E1BEE7",
+        "textFarbe": "#7B1FA2",
+        "width": 350,
+        "height": 400,
+        "position": {"x": -400, "y": 50}
+      },
+      {
+        "name": "realist",
+        "emoji": "🔧",
+        "label": "DER REALIST",
+        "subtitle": "Wie machen wir es möglich?",
+        "fragen": [
+          "Was brauchen wir umzusetzen?",
+          "Welche Schritte sind nötig?",
+          "Wer könnte helfen?"
+        ],
+        "farbe": "#BBDEFB",
+        "textFarbe": "#1976D2",
+        "width": 350,
+        "height": 400,
+        "position": {"x": 0, "y": 50}
+      },
+      {
+        "name": "kritiker",
+        "emoji": "🔍",
+        "label": "DER KRITIKER",
+        "subtitle": "Was könnte schiefgehen?",
+        "fragen": [
+          "Was sind die Schwachstellen?",
+          "Was haben wir übersehen?",
+          "Wie könnten wir scheitern?"
+        ],
+        "farbe": "#FFCCBC",
+        "textFarbe": "#D84315",
+        "width": 350,
+        "height": 400,
+        "position": {"x": 400, "y": 50}
+      }
+    ]
+  },
+  "fragen": [
+    "Was ist die Idee oder das Projekt?",
+    "Wie weit ist die Idee bereits entwickelt?",
+    "Gibt es spezifische Bedenken oder Hoffnungen?"
+  ]
+}
