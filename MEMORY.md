@@ -37,6 +37,8 @@ When Marco describes a task (e.g., "review this TypeScript code", "optimize Kube
 
 ## Sub-Agent Repository Standard
 
+**Preferred Design Pattern:** `claude-agents` — klar, strukturiert, Hybrid (Skill + Sub-Agent Spawn)
+
 When Marco provides a new sub-agent repository, always use this structure:
 
 1. **Clone to:** `projects/<repo-name>/`
@@ -91,3 +93,36 @@ Dies gilt für ALLE zukünftigen Projekte – keine Ausnahmen.
 ~/.openclaw/workspace/skills/memory-manager/organize.sh  # Organize memories
 ~/.openclaw/workspace/skills/memory-manager/search.sh episodic "keyword"
 ```
+
+## Voice Message Auto-Transcription
+
+**Rule:** When Marco sends a voice message (audio/ogg), automatically transcribe it using Whisper.
+
+**Process:**
+1. Detect incoming audio attachment
+2. Run: `~/.local/bin/transcribe <filepath>`
+3. Reply with the transcribed text + "_Transkription:_" prefix
+
+**Model:** tiny (fast, good for short voice messages)
+**Language:** German (de) unless detected otherwise
+
+---
+
+## Browser Usage Policy (Marco's Preference)
+
+**Workflow:**
+1. Bei Browser-Anfragen **immer zuerst isolierten Modus probieren** (`profile="openclaw"`)
+2. Bei Fehler → **Feedback geben** was schiefging
+3. Dann Fallback auf Web-Fetch oder Chrome-Extension
+4. **Ziel:** Isolierten Browser stabil zum Laufen bekommen
+
+**Aktueller Status (2026-02-26):**
+- Chromium installiert ✅
+- Gateway-Service Timeout ❌
+- Fehler: `Can't reach the OpenClaw browser control service (timed out after 15000ms)`
+- Ursache: OpenClaw Gateway, nicht Chromium
+
+**TODO:** 
+- Bei Heartbeats oder manuellen Checks: Isolierten Browser-Status verfolgen
+- Bei OpenClaw-Updates: Browser-Funktionalität testen
+- Langfristig: Issue bei OpenClaw aufmachen oder Workaround finden
