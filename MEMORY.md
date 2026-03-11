@@ -1,11 +1,60 @@
 # MEMORY.md - Long-Term Memory
 
+## AI Trends Daily Report
+
+**Eingerichtet:** 11.03.2026
+
+### Notion Struktur
+- **Hauptseite "AI Trends"** unter OpenClaw
+  - Page ID: `32036888-7c48-8184-a47d-e9ad2c89f9f6`
+  - URL: https://notion.so/320368887c488184a47de9ad2c89f9f6
+- Täglich eine Unterseite: `AI Trends — DD.MM.YYYY` (Icon: 🗞️)
+
+### Cron Job
+- **Job ID:** `534fd1c9-f311-4754-8d4f-6d4685c64186`
+- **Zeitplan:** Täglich 08:00 Uhr CET (`0 8 * * *`, tz: Europe/Berlin)
+- **Agent:** main | **Session:** isolated
+- **Timeout:** 600s | **Thinking:** medium
+- **Benachrichtigung:** Telegram (announce bei Fertigstellung)
+
+### Quellen (20 gesamt)
+- 🔬 Research & Labs: arXiv cs.AI, OpenAI Blog, DeepMind Research, Anthropic News, Meta AI Research
+- 📰 News: The Verge AI, TechCrunch AI, VentureBeat AI, Wired AI, MIT Tech Review, AI Times, AI-News.com
+- 🧠 Newsletter: Import AI (Substack), The Sequence, Morning Brew Emerging Tech, TLDR AI
+- 🛠 Community: HuggingFace Blog, Papers With Code, Towards Data Science, Hacker News
+
+### Output-Format pro Seite
+- Callout (blue_background): Schlagzeile des Tages
+- Divider
+- H2 pro Kategorie + bis zu **10 Bullet Points** mit:
+  - Deutschsprachiger Zusammenfassung
+  - Direktem Artikel-Link: ` → Artikel` (Notion rich_text link)
+- Divider
+- Footer italic grau: "Automatisch generiert von Alfred am DD.MM.YYYY — 20 Quellen gescannt"
+
+### Verwaltung
+```bash
+openclaw cron list
+openclaw cron run 534fd1c9-f311-4754-8d4f-6d4685c64186   # manueller Test
+openclaw cron edit 534fd1c9-f311-4754-8d4f-6d4685c64186  # anpassen
+openclaw cron disable/enable 534fd1c9-f311-4754-8d4f-6d4685c64186
+```
+
+### Projekt-Files
+- Script (Node.js Fallback): `projects/ai-trends/run.js`
+- Doku: `projects/ai-trends/ARBEITSSTAND.md`
+
+---
+
 ## Notion Preferences
 
 **Article Creation Rule:**
 When Marco says "create an article":
-1. Write the article content
-2. Add it as a new page under the **OpenClaw** page in Notion
+1. Write the **complete article content** — full text, all sections, all images/graphics included
+2. Use the **original language of the source** — never translate
+3. Add it as a new page under the **OpenClaw** page in Notion
+
+Only create a shorter/summarized version if Marco explicitly asks for it.
 
 Notion integration token stored in `.env.notion`.
 
@@ -105,24 +154,3 @@ Dies gilt für ALLE zukünftigen Projekte – keine Ausnahmen.
 
 **Model:** tiny (fast, good for short voice messages)
 **Language:** German (de) unless detected otherwise
-
----
-
-## Browser Usage Policy (Marco's Preference)
-
-**Workflow:**
-1. Bei Browser-Anfragen **immer zuerst isolierten Modus probieren** (`profile="openclaw"`)
-2. Bei Fehler → **Feedback geben** was schiefging
-3. Dann Fallback auf Web-Fetch oder Chrome-Extension
-4. **Ziel:** Isolierten Browser stabil zum Laufen bekommen
-
-**Aktueller Status (2026-02-26):**
-- Chromium installiert ✅
-- Gateway-Service Timeout ❌
-- Fehler: `Can't reach the OpenClaw browser control service (timed out after 15000ms)`
-- Ursache: OpenClaw Gateway, nicht Chromium
-
-**TODO:** 
-- Bei Heartbeats oder manuellen Checks: Isolierten Browser-Status verfolgen
-- Bei OpenClaw-Updates: Browser-Funktionalität testen
-- Langfristig: Issue bei OpenClaw aufmachen oder Workaround finden
