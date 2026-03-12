@@ -17,6 +17,7 @@
 - **Session:** Isolated Agent
 - **Timeout:** 600 Sekunden
 - **Benachrichtigung:** Telegram (bei Fertigstellung)
+- **Delivery Channel:** `telegram` (gesetzt am 12.03.2026 — fix für Multi-Channel-Setup)
 
 ### Quellen (20 gesamt)
 - 🔬 Research & Labs: arXiv, OpenAI, DeepMind, Anthropic, Meta AI
@@ -40,6 +41,14 @@ AI Trends — DD.MM.YYYY
 │   └── • Bullet 1-5
 └── ─ Automatisch generiert von Alfred am...
 ```
+
+## Änderungslog
+
+### 12.03.2026 — Delivery Channel Fix
+- **Problem:** Cron-Job lief erfolgreich, aber Benachrichtigung fehlgeschlagen
+- **Ursache:** Multi-Channel-Setup (Telegram + WhatsApp), kein expliziter Channel gesetzt
+- **Fix:** `openclaw cron edit 534fd1c9-f311-4754-8d4f-6d4685c64186 --channel telegram`
+- **Notion-Seite trotzdem erstellt:** https://www.notion.so/AI-Trends-12-03-2026-321368887c488157b37dd7c721a73bd9
 
 ## Nächste Schritte / Ideen
 - [ ] Wöchentliche Zusammenfassung (Freitag) erstellen
