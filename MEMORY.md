@@ -46,13 +46,28 @@ openclaw cron disable/enable 534fd1c9-f311-4754-8d4f-6d4685c64186
 
 ---
 
+## Notion Page Structure
+
+**OpenClaw (Main Page)**
+- Page ID: `30c36888-7c48-8005-9ef0-df351874ea38`
+- URL: https://www.notion.so/OpenClaw-30c368887c4880059ef0df351874ea38
+- Use for: All manually created articles
+
+**AI Trends (Sub-page under OpenClaw)**
+- Page ID: `32036888-7c48-8184-a47d-e9ad2c89f9f6`
+- Use for: Daily automated reports ONLY
+
+---
+
 ## Notion Preferences
 
 **Article Creation Rule:**
 When Marco says "create an article":
 1. Write the **complete article content** — full text, all sections, all images/graphics included
 2. Use the **original language of the source** — never translate
-3. Add it as a new page under the **OpenClaw** page in Notion
+3. Add it as a new page under **OpenClaw** (Page ID: `30c36888-7c48-8005-9ef0-df351874ea38`)
+
+⚠️ **VERIFY:** Always double-check the parent page ID before creating. AI Trends ID starts with `320...`, OpenClaw ID starts with `30c...`.
 
 Only create a shorter/summarized version if Marco explicitly asks for it.
 
