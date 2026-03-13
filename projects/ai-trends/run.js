@@ -1,22 +1,36 @@
 #!/usr/bin/env node
 /**
  * AI Trends Daily Summary
- * Fetches AI news from 20 sources, summarizes with Claude, posts to Notion
+ * Fetches AI news from 20 sources, summarizes with AI, posts to Notion
  * 
  * Runs daily at 8:00 AM CET via OpenClaw cron
  */
 
-import Anthropic from "@anthropic-ai/sdk";
 import * as dotenv from "dotenv";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
+import { readFileSync, writeFileSync, unlinkSync } from "fs";
+import { spawn } from "child_process";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: join(__dirname, "../../.env.notion") });
-dotenv.config({ path: join(__dirname, "../../.env") });
 
 const NOTION_TOKEN = process.env.NOTION_TOKEN;
 const AI_TRENDS_PAGE_ID = "32036888-7c48-8184-a47d-e9ad2c89f9f6";
+
+// Gateway Token aus OpenClaw Config lesen
+function getGatewayToken() {
+  try {
+    const configPath = join(process.env.HOME || "/home/Alfred", ".openclaw", "openclaw.json");
+    const config = JSON.parse(readFileSync(configPath, "utf-8"));
+    return config.gateway?.auth?.token || config.gateway?.authToken || config.gateway?.token;
+  } catch (e) {
+    console.error("⚠️ Konnte Gateway Token nicht lesen:", e.message);
+    return null;
+  }
+}
+
+const GATEWAY_TOKEN = getGatewayToken();
 
 const SOURCES = {
   "🔬 Research & Labs": [
@@ -76,42 +90,129 @@ async function fetchPage(url, timeoutMs = 15000) {
   }
 }
 
-async function summarizeWithClaude(rawContent) {
-  const client = new Anthropic();
+// Get AI summary using openclaw CLI with run command
+async function summarizeWithAI(rawContent) {
+  const prompt = `You are an AI news analyst. Analyze the following raw content from AI news sources and create a compact summary.
 
-  const prompt = `Du bist ein KI-Nachrichten-Analyst. Analysiere die folgenden Rohinhalte von KI-News-Quellen und erstelle eine kompakte, deutschsprachige Zusammenfassung.
+Structure per category:
+- Up to 10 bullet points with the most important news/developments
+- Focus on concrete news, releases, research results
+- No marketing fluff
+- If a source provides no usable content, skip it
+- IMPORTANT: Preserve the ORIGINAL LANGUAGE of each source - do not translate
 
-Struktur pro Kategorie:
-- Maximal 3-5 Bullet Points mit den wichtigsten Nachrichten/Entwicklungen
-- Fokus auf konkrete Neuigkeiten, Releases, Forschungsergebnisse
-- Keine Marketing-Floskeln
-- Falls eine Quelle keine verwertbaren Inhalte liefert, weglassen
+IMPORTANT: Return ONLY pure JSON, no Markdown code blocks, no explanations, just the JSON object.
 
-FORMAT: Gib JSON zurück mit dieser Struktur:
+FORMAT:
 {
-  "headline": "kurze Schlagzeile des Tages (max 80 Zeichen)",
+  "headline": "short headline of the day (max 80 chars, in English)",
   "categories": {
-    "🔬 Research & Labs": ["bullet1", "bullet2", ...],
-    "📰 News & Journalismus": ["bullet1", "bullet2", ...],
-    "🧠 Newsletter & Kuratiert": ["bullet1", "bullet2", ...],
-    "🛠 Community & Tools": ["bullet1", "bullet2", ...]
+    "🔬 Research & Labs": ["bullet1", "bullet2", "...up to 10"],
+    "📰 News & Journalismus": ["bullet1", "bullet2", "...up to 10"],
+    "🧠 Newsletter & Kuratiert": ["bullet1", "bullet2", "...up to 10"],
+    "🛠 Community & Tools": ["bullet1", "bullet2", "...up to 10"]
   }
 }
 
-ROHINHALTE:
-${rawContent}`;
+RAW CONTENT:
+${rawContent.slice(0, 60000)}`;
 
-  const message = await client.messages.create({
-    model: "claude-opus-4-5",
-    max_tokens: 2000,
-    messages: [{ role: "user", content: prompt }],
+  // Write prompt to temp file
+  const tempFile = join(__dirname, `.prompt-${Date.now()}.txt`);
+  writeFileSync(tempFile, prompt, "utf-8");
+
+  if (!GATEWAY_TOKEN) {
+    throw new Error("Gateway Token nicht gefunden. Ist OpenClaw konfiguriert?");
+  }
+
+  return new Promise((resolve, reject) => {
+    // Create a simple Node.js script that reads the prompt and outputs AI response
+    const aiScript = `
+const fs = require('fs');
+const prompt = fs.readFileSync('${tempFile}', 'utf-8');
+
+async function getAIResponse() {
+  const response = await fetch('http://127.0.0.1:18789/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ${GATEWAY_TOKEN}'
+    },
+    body: JSON.stringify({
+      model: 'moonshot/kimi-k2.5',
+      messages: [{ role: 'user', content: prompt }],
+      temperature: 0.7
+    })
   });
 
-  const text = message.content[0].text;
-  // Extract JSON from response
-  const jsonMatch = text.match(/\{[\s\S]*\}/);
-  if (!jsonMatch) throw new Error("Kein JSON in Claude-Antwort");
-  return JSON.parse(jsonMatch[0]);
+  if (!response.ok) {
+    console.error('API Error:', await response.text());
+    process.exit(1);
+  }
+
+  const data = await response.json();
+  console.log(data.choices[0].message.content);
+}
+
+getAIResponse().catch(e => {
+  console.error(e);
+  process.exit(1);
+});
+`;
+    
+    const scriptFile = join(__dirname, `.ai-script-${Date.now()}.cjs`);
+    writeFileSync(scriptFile, aiScript, "utf-8");
+
+    const child = spawn("node", [scriptFile], {
+      cwd: __dirname,
+      timeout: 120000,
+    });
+
+    let stdout = "";
+    let stderr = "";
+
+    child.stdout.on("data", (data) => {
+      stdout += data.toString();
+    });
+
+    child.stderr.on("data", (data) => {
+      stderr += data.toString();
+    });
+
+    child.on("close", (code) => {
+      // Cleanup temp files
+      try {
+        unlinkSync(tempFile);
+        unlinkSync(scriptFile);
+      } catch (e) {}
+
+      if (code !== 0) {
+        reject(new Error(`AI request failed: ${stderr || stdout}`));
+        return;
+      }
+
+      try {
+        // Try to extract JSON from the response
+        const jsonMatch = stdout.match(/\{[\s\S]*\}/);
+        if (!jsonMatch) {
+          reject(new Error("Kein JSON in AI-Antwort: " + stdout));
+          return;
+        }
+        resolve(JSON.parse(jsonMatch[0]));
+      } catch (e) {
+        reject(new Error("JSON Parse Fehler: " + e.message));
+      }
+    });
+
+    child.on("error", (err) => {
+      // Cleanup temp files
+      try {
+        unlinkSync(tempFile);
+        unlinkSync(scriptFile);
+      } catch (e) {}
+      reject(new Error("Failed to spawn: " + err.message));
+    });
+  });
 }
 
 function buildNotionBlocks(summary, date) {
@@ -225,8 +326,8 @@ async function main() {
 
   const rawContent = allContent.join("\n\n---\n\n").slice(0, 80000);
 
-  console.log("🧠 Summarizing with Claude...");
-  const summary = await summarizeWithClaude(rawContent);
+  console.log("🧠 Summarizing with AI (default model)...");
+  const summary = await summarizeWithAI(rawContent);
 
   console.log(`📝 Creating Notion page: "AI Trends — ${today}"`);
   const page = await createNotionPage(today, summary);
